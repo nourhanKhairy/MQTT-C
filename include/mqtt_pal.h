@@ -124,8 +124,8 @@ extern "C" {
     #include <windows.h>
     #include <time.h>
     #include <stdint.h>
+    #include <sys/types.h>
 
-    typedef SSIZE_T ssize_t;
     #define MQTT_PAL_HTONS(s) htons(s)
     #define MQTT_PAL_NTOHS(s) ntohs(s)
 

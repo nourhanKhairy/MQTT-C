@@ -8,6 +8,11 @@
 #include <stdio.h>
 #include <pthread.h>
 
+#if defined(WIN32)
+#include <winsock2.h>
+#pragma comment(lib, "ws2_32.lib")
+#endif
+
 #include <mqtt.h>
 #include "templates/posix_sockets.h"
 
@@ -38,11 +43,19 @@ int main(int argc, const char *argv[])
     const char* port;
     const char* topic;
 
+#if defined(WIN32)
+    WSADATA wsa_data;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0) {
+        perror("WSAStartup failed");
+        exit(EXIT_FAILURE);
+    }
+#endif
+
     /* get address (argv[1] if present) */
     if (argc > 1) {
         addr = argv[1];
     } else {
-        addr = "test.mosquitto.org";
+        addr = "54.36.178.49";
     }
 
     /* get port number (argv[2] if present) */
@@ -56,7 +69,7 @@ int main(int argc, const char *argv[])
     if (argc > 3) {
         topic = argv[3];
     } else {
-        topic = "datetime";
+        topic = "NTest";
     }
 
     /* open the non-blocking TCP socket (connecting to the broker) */
@@ -115,6 +128,9 @@ void exit_example(int status, int sockfd, pthread_t *client_daemon)
 {
     if (sockfd != -1) close(sockfd);
     if (client_daemon != NULL) pthread_cancel(*client_daemon);
+#if defined(WIN32)
+    WSACleanup();
+#endif
     exit(status);
 }
 

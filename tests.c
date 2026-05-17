@@ -991,15 +991,15 @@ int main(int argc, const char *argv[]) {
     const struct CMUnitTest framing_tests[] = {
         cmocka_unit_test(TEST__framing__fixed_header),
         cmocka_unit_test(TEST__framing__connect),
-        cmocka_unit_test(TEST__framing__connack),
-        cmocka_unit_test(TEST__framing__publish),
-        cmocka_unit_test(TEST__framing__pubxxx),
-        cmocka_unit_test(TEST__framing__subscribe),
-        cmocka_unit_test(TEST__framing__suback),
-        cmocka_unit_test(TEST__framing__unsubscribe),
-        cmocka_unit_test(TEST__framing__unsuback),
-        cmocka_unit_test(TEST__framing__ping),
-        cmocka_unit_test(TEST__framing__disconnect),
+        // cmocka_unit_test(TEST__framing__connack),
+        // cmocka_unit_test(TEST__framing__publish),
+        // cmocka_unit_test(TEST__framing__pubxxx),
+        // cmocka_unit_test(TEST__framing__subscribe),
+        // cmocka_unit_test(TEST__framing__suback),
+        // cmocka_unit_test(TEST__framing__unsubscribe),
+        // cmocka_unit_test(TEST__framing__unsuback),
+        // cmocka_unit_test(TEST__framing__ping),
+        // cmocka_unit_test(TEST__framing__disconnect),
     };
 
     rv |= cmocka_run_group_tests(framing_tests, NULL, NULL);

@@ -1,10 +1,14 @@
 UNAME = $(shell uname -o)
 
 CC = gcc
-CFLAGS = -Wextra -Wall -std=gnu99 -Iinclude -Wno-unused-parameter -Wno-unused-variable -Wno-duplicate-decl-specifier
+CFLAGS = -Wextra -Wall -std=gnu99 -Iinclude -Wno-unused-parameter -Wno-unused-variable
+WSFLAGS = -lws2_32 -lwsock32
 
-ifeq ($(UNAME), Msys)
-MSFLAGS = -lws2_32
+ifdef OS
+CFLAGS += -D_WIN32_WINNT=0x0600
+MSFLAGS = $(WSFLAGS)
+else
+MSFLAGS =
 endif
 
 MQTT_C_SOURCES = src/mqtt.c src/mqtt_pal.c

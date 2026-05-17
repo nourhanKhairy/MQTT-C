@@ -8,6 +8,11 @@
 #include <stdio.h>
 #include <pthread.h>
 
+#if defined(WIN32)
+#include <winsock2.h>
+#pragma comment(lib, "ws2_32.lib")
+#endif
+
 #include <mqtt.h>
 #include "templates/posix_sockets.h"
 
@@ -42,6 +47,14 @@ int main(int argc, const char *argv[])
     const char* addr;
     const char* port;
     const char* topic;
+
+#if defined(WIN32)
+    WSADATA wsa_data;
+    if (WSAStartup(MAKEWORD(2, 2), &wsa_data) != 0) {
+        perror("WSAStartup failed");
+        exit(EXIT_FAILURE);
+    }
+#endif
 
     /* get address (argv[1] if present) */
     if (argc > 1) {
@@ -100,8 +113,10 @@ int main(int argc, const char *argv[])
 
     /* start publishing the time */
     printf("%s is ready to begin publishing the time.\n", argv[0]);
+    printf("Publishing to topic: '%s' on broker: %s:%s\n", topic, addr, port);
     printf("Press ENTER to publish the current time.\n");
     printf("Press CTRL-D (or any other key) to exit.\n\n");
+    fflush(stdout);
     while(fgetc(stdin) == '\n') {
         /* get the current time */
         time_t timer;
@@ -113,7 +128,8 @@ int main(int argc, const char *argv[])
         /* print a message */
         char application_message[256];
         snprintf(application_message, sizeof(application_message), "The time is %s", timebuf);
-        printf("%s published : \"%s\"", argv[0], application_message);
+        printf("%s published : \"%s\"\n", argv[0], application_message);
+        fflush(stdout);
 
         /* publish the time */
         mqtt_publish(&client, topic, application_message, strlen(application_message) + 1, MQTT_PUBLISH_QOS_0);
@@ -137,6 +153,9 @@ void exit_example(int status, int sockfd, pthread_t *client_daemon)
 {
     if (sockfd != -1) close(sockfd);
     if (client_daemon != NULL) pthread_cancel(*client_daemon);
+#if defined(WIN32)
+    WSACleanup();
+#endif
     exit(status);
 }
 
